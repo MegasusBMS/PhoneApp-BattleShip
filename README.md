@@ -11,6 +11,10 @@ Aplicația constă din:
 - **GameService** (`Servicii/GameService/`): Gestionarea stării jocului, validarea tablelor și joc în timp real via WebSocket
 - **QueueService** (`Servicii/QueueService/`): Împerecherea jucătorilor și crearea jocurilor
 
+https://github.com/MegasusBMS/AuthService-BattleShip
+https://github.com/MegasusBMS/GameService-BattleShip
+https://github.com/MegasusBMS/QueueService-BattleShip
+
 ## Funcționalități
 
 ### Aplicația Mobilă
