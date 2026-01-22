@@ -1,50 +1,240 @@
-# Welcome to your Expo app 👋
+# Aplicația Joc Battleship
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+O implementare completă a jocului Battleship (Bătălia Navală) care include o aplicație mobilă React Native și trei microservicii backend pentru autentificare, gestionarea jocului și împerecherea jucătorilor.
 
-## Get started
+## Prezentare Generală a Arhitecturii
 
-1. Install dependencies
+Aplicația constă din:
 
-   ```bash
-   npm install
-   ```
+- **Aplicația Mobilă** (`PhoneApp/BattleShip/`): Aplicație React Native Expo pentru joc
+- **AuthService** (`Servicii/AuthService/`): Autentificare utilizatori și gestionarea token-urilor JWT
+- **GameService** (`Servicii/GameService/`): Gestionarea stării jocului, validarea tablelor și joc în timp real via WebSocket
+- **QueueService** (`Servicii/QueueService/`): Împerecherea jucătorilor și crearea jocurilor
 
-2. Start the app
+## Funcționalități
 
-   ```bash
-   npx expo start
-   ```
+### Aplicația Mobilă
+- Înregistrare și autentificare utilizatori
+- Joc multiplayer în timp real
+- Plasarea navelor prin drag-and-drop
+- Tablă de joc vizuală cu indicatori pentru lovituri/ratări
+- Integrare WebSocket pentru actualizări live
+- Sistem de coadă pentru jucători
+- Istoric jocuri și statistici
 
-In the output, you'll find options to open the app in a
+### Servicii Backend
+- **Autentificare**: Gestionarea utilizatorilor bazată pe JWT
+- **Logică Joc**: Implementare completă a regulilor Battleship
+- **Comunicare în Timp Real**: Suport WebSocket pentru joc live
+- **Împerechere**: Împerechere automată a jucătorilor
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Tehnologii Utilizate
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+### Aplicația Mobilă
+- React Native
+- Expo Router
+- TypeScript
+- AsyncStorage pentru gestionarea token-urilor
+- WebSocket pentru actualizări în timp real
 
-## Get a fresh project
+### Servicii Backend
+- Node.js
+- Express.js
+- WebSocket (biblioteca ws)
+- JWT pentru autentificare
+- Stocare în memorie (dezvoltare)
 
-When you're ready, run:
+## Reguli Joc
+
+- Câmp de luptă 10x10
+- Nave: 2x1, 2x2, 3x1, 4x1 și 3x2 (în formă de U)
+- Jucătorii trag alternativ în grila adversarului
+- Lovește toate părțile unei nave pentru a o scufunda
+- Primul care scufundă toate navele inamice câștigă
+
+## Instalare și Configurare
+
+### Cerințe Preliminare
+- Node.js (v16+)
+- npm sau yarn
+- Expo CLI (pentru aplicația mobilă)
+
+### 1. Clonare și Configurare Servicii
 
 ```bash
-npm run reset-project
+# Navighează la directorul servicii
+cd Servicii
+
+# Configurare AuthService
+cd AuthService
+npm install
+npm run start  # Rulează pe portul 3001
+
+# Configurare GameService (terminal nou)
+cd ../GameService
+npm install
+npm run start  # Rulează pe portul 3002
+
+# Configurare QueueService (terminal nou)
+cd ../QueueService
+npm install
+npm run start  # Rulează pe portul 3003
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### 2. Configurare Aplicație Mobilă
 
-## Learn more
+```bash
+# Navighează la aplicația mobilă
+cd ../../PhoneApp/BattleShip
 
-To learn more about developing your project with Expo, look at the following resources:
+# Instalează dependențele
+npm install
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+# Configurează endpoint-urile API (opțional)
+# Actualizează services/auth.ts, services/gameApi.ts, services/queue.ts cu URL-urile corecte
 
-## Join the community
+# Pornește aplicația
+npm start
+```
 
-Join our community of developers creating universal apps.
+### 3. Variabile de Mediu
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Creează fișiere `.env` în fiecare director de serviciu dacă este necesar:
+
+**AuthService:**
+```
+PORT=3001
+JWT_SECRET=cheia-ta-secreta
+JWT_TTL=1h
+```
+
+**GameService:**
+```
+PORT=3002
+```
+
+**QueueService:**
+```
+PORT=3003
+GAME_SERVICE_URL=http://localhost:3002
+AUTH_SERVICE_URL=http://localhost:3001
+```
+
+## Documentație API
+
+### AuthService (Port 3001)
+
+#### POST `/auth/signup`
+Înregistrează un utilizator nou.
+
+**Cerere:**
+```json
+{
+  "email": "string",
+  "username": "string",
+  "password": "string"
+}
+```
+
+**Răspuns:**
+```json
+{
+  "token": "jwt-token",
+  "user": {
+    "uuid": "user-uuid",
+    "username": "username"
+  }
+}
+```
+
+#### POST `/auth/login`
+Autentifică utilizatorul.
+
+**Cerere:**
+```json
+{
+  "username": "string",
+  "password": "string"
+}
+```
+
+#### POST `/auth/introspect`
+Validează token-ul JWT.
+
+**Cerere:**
+```json
+{
+  "token": "jwt-token"
+}
+```
+
+### GameService (Port 3002)
+
+#### POST `/create-game`
+Creează o nouă sesiune de joc.
+
+#### POST `/submit-board`
+Trimite configurația tablei jucătorului.
+
+#### POST `/fire`
+Execută un atac pe tabla adversarului.
+
+#### GET `/state`
+Obține starea curentă a jocului (debugging).
+
+**Evenimente WebSocket:**
+- `connected`: Jucător conectat la joc
+- `attack_received`: Notificare atac
+- `board_submitted`: Notificare trimitere tablă
+- `game_started`: Inițializare joc
+- `game_ended`: Finalizare joc
+
+### QueueService (Port 3003)
+
+**Conexiune WebSocket:** `ws://localhost:3003/queue`
+
+**Evenimente:**
+- `matched`: Jucător împerecheat cu adversar
+- `error`: Notificare eroare
+
+## Rularea Aplicației
+
+1. Pornește toate cele trei servicii în terminale separate
+2. Pornește aplicația Expo mobilă
+3. Înregistrează/autentifică utilizatori pe dispozitive/simulatoare diferite
+4. Alătură-te cozii pentru a găsi adversari
+5. Plasează navele și începe bătălia!
+
+## Dezvoltare
+
+### Structura Proiectului
+
+```
+/
+├── PhoneApp/BattleShip/          # Aplicație React Native Expo
+│   ├── app/                       # Ecrane aplicație (rutare bazată pe fișiere)
+│   ├── components/                # Componente UI reutilizabile
+│   ├── services/                  # Clienți servicii API
+│   └── utils/                     # Utilitare (stocare token-uri, etc.)
+└── Servicii/                      # Servicii Backend
+    ├── AuthService/               # Serviciu autentificare
+    ├── GameService/               # Serviciu logică joc
+    └── QueueService/              # Serviciu împerechere
+```
+
+### Adăugarea Funcționalităților Noi
+
+- **Aplicație Mobilă**: Adaugă ecrane noi în directorul `app/`
+- **Servicii**: Urmează pattern-urile existente pentru endpoint-uri noi
+- **WebSocket**: Folosește structura de evenimente stabilită
+
+## Contribuții
+
+1. Urmează stilul de cod și pattern-urile existente
+2. Testează temeinic pe toate serviciile
+3. Actualizează documentația pentru schimbările API
+4. Asigură-te că aplicația mobilă funcționează cu schimbările serviciilor
+
+## Licență
+
+Acest proiect este licențiat sub Licența ISC.
