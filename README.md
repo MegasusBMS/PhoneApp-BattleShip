@@ -15,6 +15,7 @@ Aplicația constă din:
 - **AuthService:** https://github.com/MegasusBMS/AuthService-BattleShip
 - **GameService:** https://github.com/MegasusBMS/GameService-BattleShip
 - **QueueService:** https://github.com/MegasusBMS/QueueService-BattleShip
+- **Redis CodeChallange:** https://app.codecrafters.io/courses/redis/overview 
 
 ## Funcționalități
 
