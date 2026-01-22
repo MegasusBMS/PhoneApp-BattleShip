@@ -12,12 +12,9 @@ Aplicația constă din:
 - **QueueService** (`Servicii/QueueService/`): Împerecherea jucătorilor și crearea jocurilor
 
 ## Services
-**AuthService:**
-https://github.com/MegasusBMS/AuthService-BattleShip
-**GameService:**
-https://github.com/MegasusBMS/GameService-BattleShip
-**QueueService:**
-https://github.com/MegasusBMS/QueueService-BattleShip
+- **AuthService:** https://github.com/MegasusBMS/AuthService-BattleShip
+- **GameService:** https://github.com/MegasusBMS/GameService-BattleShip
+- **QueueService:** https://github.com/MegasusBMS/QueueService-BattleShip
 
 ## Funcționalități
 
